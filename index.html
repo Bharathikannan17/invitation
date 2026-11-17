@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ritvik's 1st Birthday Invitation | Cinematic Slow-Mo 3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Outfit:wght@300;400;500;600;700;800&family=Mukta+Malar:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 50%, #eff6ff 100%);
+      --card-bg: rgba(255, 255, 255, 0.98);
+      --baby-blue: #38bdf8;
+      --baby-blue-dark: #0284c7;
+      --baby-blue-deep: #0369a1;
+      --sky-light: #f0f9ff;
+      --sky-border: #bae6fd;
+      --gold-primary: #d4af37;
+      --gold-light: #fef08a;
+      --gold-accent: #f59e0b;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 16px;
+      color: var(--text-main);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Confetti Canvas */
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Floating background elements */
+    .balloon {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatUp 8s ease-in-out infinite;
+    }
+    .b1 {
+      width: 140px;
+      height: 165px;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #7dd3fc 60%, #38bdf8 100%);
+      opacity: 0.55;
+      top: 8%;
+      left: 6%;
+      animation-delay: 0s;
+    }
+    .b2 {
+      width: 105px;
+      height: 125px;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #93c5fd 60%, #60a5fa 100%);
+      opacity: 0.5;
+      top: 65%;
+      right: 6%;
+      animation-delay: 3s;
+    }
+    .b3 {
+      width: 85px;
+      height: 100px;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #fef08a 60%, #fde047 100%);
+      opacity: 0.45;
+      bottom: 10%;
+      left: 10%;
+      animation-delay: 5s;
+    }
+
+    @keyframes floatUp {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-24px) rotate(4deg); }
+    }
+
+    /* 3D SCENE WRAPPER */
+    .scene-3d {
+      width: 100%;
+      max-width: 460px;
+      perspective: 1500px;
+      perspective-origin: center center;
+      position: relative;
+      margin: auto;
+    }
+
+    /* Card Frame */
+    .card-container {
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 30px;
+      padding: 34px 26px;
+      box-shadow: 0 25px 50px rgba(2, 132, 199, 0.2), 0 6px 20px rgba(0, 0, 0, 0.05);
+      position: relative;
+      border: 3px solid transparent;
+      background-clip: padding-box;
+      transform-style: preserve-3d;
+      transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card-container::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      background: linear-gradient(135deg, #7dd3fc 0%, #fef08a 50%, #38bdf8 100%);
+      border-radius: 32px;
+      z-index: -1;
+      opacity: 0.85;
+    }
+
+    /* =========================================
+       3D ROYAL PALACE DOORS OVERLAY (SLOW-MO)
+       ========================================= */
+    .doors-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      border-radius: 30px;
+      overflow: hidden;
+      display: flex;
+      transform-style: preserve-3d;
+      transition: visibility 3.5s ease;
+    }
+
+    .doors-overlay.opened {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Radiant Light Burst behind opening doors */
+    .light-burst {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(254, 240, 138, 0.9) 0%, rgba(56, 189, 248, 0.6) 40%, transparent 70%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 45;
+      transition: opacity 2.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .doors-overlay.opened .light-burst {
+      opacity: 1;
+      animation: lightFade 3.5s forwards;
+    }
+
+    @keyframes lightFade {
+      0% { opacity: 0; transform: scale(0.6); }
+      30% { opacity: 0.9; transform: scale(1.1); }
+      100% { opacity: 0; transform: scale(1.3); }
+    }
+
+    /* Individual Door Wings (Cinematic 3.2s Slow-Mo) */
+    .door-wing {
+      width: 50%;
+      height: 100%;
+      position: relative;
+      background: linear-gradient(145deg, #bae6fd 0%, #7dd3fc 40%, #38bdf8 100%);
+      box-shadow: inset 0 0 30px rgba(2, 132, 199, 0.35);
+      transform-style: preserve-3d;
+      /* CINEMATIC SLOW-MO TIMING: 3.2s */
+      transition: transform 3.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                  box-shadow 3s ease, 
+                  opacity 1s ease 2.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      padding: 30px 14px;
+      cursor: pointer;
+    }
+
+    .door-left {
+      transform-origin: left center;
+      border-right: 2px solid rgba(254, 240, 138, 0.9);
+      box-shadow: inset -5px 0 18px rgba(2, 132, 199, 0.4), inset 4px 4px 10px rgba(255, 255, 255, 0.7);
+    }
+
+    .door-right {
+      transform-origin: right center;
+      border-left: 2px solid rgba(254, 240, 138, 0.9);
+      box-shadow: inset 5px 0 18px rgba(2, 132, 199, 0.4), inset -4px 4px 10px rgba(255, 255, 255, 0.7);
+    }
+
+    /* 3D Door Panels / Molding */
+    .door-panel {
+      width: 85%;
+      height: 25%;
+      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+      border: 3px solid #fef08a;
+      border-radius: 14px;
+      box-shadow: inset 2px 2px 6px rgba(255, 255, 255, 0.9), inset -2px -2px 6px rgba(2, 132, 199, 0.3), 0 4px 10px rgba(2, 132, 199, 0.2);
+      position: relative;
+    }
+
+    .door-panel::after {
+      content: '✦';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #0284c7;
+      font-size: 14px;
+      opacity: 0.6;
+    }
+
+    /* Handles */
+    .door-handle {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 14px;
+      height: 60px;
+      background: linear-gradient(135deg, #fef08a 0%, #eab308 50%, #ca8a04 100%);
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25), inset 1px 1px 3px #ffffff;
+      z-index: 10;
+    }
+    .door-left .door-handle {
+      right: 14px;
+    }
+    .door-right .door-handle {
+      left: 14px;
+    }
+
+    /* SLOW-MO 3D Door Swing State */
+    .doors-overlay.opened .door-left {
+      transform: rotateY(-130deg);
+      opacity: 0;
+    }
+
+    .doors-overlay.opened .door-right {
+      transform: rotateY(130deg);
+      opacity: 0;
+    }
+
+    /* Center Royal Seal (Slow-Mo Lift) */
+    .royal-seal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) translateZ(40px);
+      width: 160px;
+      height: 160px;
+      background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+      border: 5px solid #fef08a;
+      outline: 3px solid #38bdf8;
+      border-radius: 50%;
+      box-shadow: 0 16px 35px rgba(2, 132, 199, 0.35), 0 0 25px rgba(254, 240, 138, 0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      z-index: 60;
+      animation: sealGlow 2.4s ease-in-out infinite;
+      /* SLOW-MO TIMING: 2.4s */
+      transition: transform 2.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.8s ease;
+      padding: 10px;
+    }
+
+    @keyframes sealGlow {
+      0%, 100% {
+        transform: translate(-50%, -50%) translateZ(40px) scale(1);
+        box-shadow: 0 16px 35px rgba(2, 132, 199, 0.35), 0 0 20px rgba(254, 240, 138, 0.7);
+      }
+      50% {
+        transform: translate(-50%, -50%) translateZ(45px) scale(1.05);
+        box-shadow: 0 20px 42px rgba(2, 132, 199, 0.45), 0 0 35px rgba(254, 240, 138, 1);
+      }
+    }
+
+    .seal-crown {
+      font-size: 32px;
+      line-height: 1;
+      filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.5));
+    }
+    .seal-name {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: #0369a1;
+      letter-spacing: 1px;
+      margin-top: 3px;
+    }
+    .seal-prompt {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-top: 6px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+    }
+
+    .doors-overlay.opened .royal-seal {
+      transform: translate(-50%, -50%) translateZ(120px) scale(1.35);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* =========================================
+       CARD INTERIOR CONTENT
+       ========================================= */
+    .header-badge {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .crown-icon {
+      font-size: 46px;
+      display: inline-block;
+      animation: pulseCrown 2.5s ease-in-out infinite;
+      filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.4));
+    }
+    @keyframes pulseCrown {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1) rotate(-3deg); }
+    }
+
+    .sub-title {
+      font-size: 13px;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #0284c7;
+      margin-top: 4px;
+    }
+
+    .invite-text {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 8px 0 16px;
+    }
+
+    /* Prince Name Banner */
+    .name-banner {
+      text-align: center;
+      margin: 12px 0 18px;
+      padding: 16px 12px;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 22px;
+      border: 2px dashed #7dd3fc;
+    }
+
+    .baby-name {
+      font-family: 'Cinzel', serif;
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 50%, #0ea5e9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: block;
+      line-height: 1.1;
+      filter: drop-shadow(0 2px 4px rgba(2, 132, 199, 0.15));
+    }
+
+    .baby-turning {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #0369a1;
+      margin-top: 6px;
+      letter-spacing: 1px;
+    }
+
+    /* Date Card */
+    .date-card {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 16px 20px;
+      text-align: center;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 22px rgba(2, 132, 199, 0.28);
+    }
+    .date-card .day {
+      color: #fef08a;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .date-card .date-highlight {
+      font-size: 26px;
+      font-weight: 700;
+      margin: 3px 0;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+    }
+
+    /* Schedule / Timeline */
+    .timeline {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .timeline-item {
+      background: var(--sky-light);
+      border: 1.5px solid var(--sky-border);
+      border-radius: 18px;
+      padding: 14px 10px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .timeline-item:hover {
+      transform: translateY(-2px);
+    }
+
+    .timeline-icon {
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+    .timeline-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #475569;
+    }
+    .timeline-time {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0284c7;
+      margin-top: 2px;
+    }
+
+    /* Venue Box */
+    .venue-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 5px solid #0284c7;
+      border-radius: 0 16px 16px 0;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+    .venue-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0369a1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .venue-address {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    /* Family Section (Tamil) */
+    .family-section {
+      text-align: center;
+      font-family: 'Mukta Malar', sans-serif;
+      background: #eff6ff;
+      border: 1.5px solid #bfdbfe;
+      border-radius: 18px;
+      padding: 16px 14px;
+      margin-bottom: 22px;
+    }
+    .family-heading {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .family-members {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 14px;
+      color: #1e3a8a;
+      font-weight: 600;
+    }
+
+    /* Action Buttons */
+    .action-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 20px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-maps {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+    }
+    .btn-maps:hover {
+      filter: brightness(1.08);
+      transform: translateY(-2px);
+    }
+
+    .btn-call {
+      background: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
+    }
+    .btn-call:hover {
+      background: #0369a1;
+      transform: translateY(-2px);
+    }
+
+    .btn-copy {
+      background: #ffffff;
+      border: 1.5px solid #bae6fd;
+      color: #0369a1;
+    }
+    .btn-copy:hover {
+      background: #f0f9ff;
+      border-color: #7dd3fc;
+    }
+
+    /* Replay & Slow-Mo Controls */
+    .controls-bar {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn-replay {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1.5px solid #7dd3fc;
+      color: #0284c7;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.15);
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-replay:hover {
+      background: #ffffff;
+      transform: scale(1.05);
+      color: #0369a1;
+      box-shadow: 0 6px 18px rgba(2, 132, 199, 0.25);
+    }
+
+    .slowmo-tag {
+      font-size: 11px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+      padding: 3px 8px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #0284c7;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.35);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- Floating soft balloons -->
+  <div class="balloon b1"></div>
+  <div class="balloon b2"></div>
+  <div class="balloon b3"></div>
+
+  <!-- 3D SCENE -->
+  <div class="scene-3d">
+
+    <!-- 3D ROYAL DOORS OVERLAY (SLOW-MO) -->
+    <div class="doors-overlay" id="doorsOverlay" onclick="openDoors()">
+      
+      <!-- Radiant Light Burst Behind Doors -->
+      <div class="light-burst"></div>
+
+      <!-- Left Door Wing -->
+      <div class="door-wing door-left">
+        <div class="door-panel"></div>
+        <div class="door-panel"></div>
+        <div class="door-panel"></div>
+        <div class="door-handle"></div>
+      </div>
+
+      <!-- Right Door Wing -->
+      <div class="door-wing door-right">
+        <div class="door-panel"></div>
+        <div class="door-panel"></div>
+        <div class="door-panel"></div>
+        <div class="door-handle"></div>
+      </div>
+
+      <!-- Center Royal Seal -->
+      <div class="royal-seal">
+        <div class="seal-crown">👑</div>
+        <div class="seal-name">RITVIK</div>
+        <div style="font-size: 11px; color: #64748b; font-weight: 600;">TURNS 1</div>
+        <div class="seal-prompt">🚪 TAP TO OPEN</div>
+      </div>
+    </div>
+
+    <!-- MAIN INVITATION CARD -->
+    <main class="card-container" id="mainCard">
+      <!-- Crown & Header -->
+      <div class="header-badge">
+        <div class="crown-icon">👑</div>
+        <div class="sub-title">1st Birthday Celebration</div>
+      </div>
+
+      <p class="invite-text">
+        With hearts full of joy and love, we warmly invite you and your family to celebrate the special milestone of our little prince!
+      </p>
+
+      <!-- Baby Name Highlight -->
+      <div class="name-banner">
+        <span class="baby-name">RITVIK</span>
+        <div class="baby-turning">⭐ IS TURNING ONE! ⭐</div>
+      </div>
+
+      <!-- Date Box -->
+      <div class="date-card">
+        <div class="day">Wednesday</div>
+        <div class="date-highlight">18th November 2026</div>
+        <div style="font-size: 13px; opacity: 0.9;">18 / 11 / 2026</div>
+      </div>
+
+      <!-- Schedule -->
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-icon">🎂</div>
+          <div class="timeline-title">Cake Cutting</div>
+          <div class="timeline-time">11:00 AM</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-icon">🍛</div>
+          <div class="timeline-title">Lunch Feast</div>
+          <div class="timeline-time">1:00 PM onwards</div>
+        </div>
+      </div>
+
+      <!-- Venue Box -->
+      <div class="venue-box">
+        <div class="venue-title">
+          📍 <span>Venue Location:</span>
+        </div>
+        <div class="venue-address">
+          19A/1, Ashok Nagar 2nd Cross Rd, Jeeva Nagar, <strong>Karur</strong>, Tamil Nadu - 639005
+        </div>
+      </div>
+
+      <!-- Family Members (Tamil) -->
+      <section class="family-section">
+        <div class="family-heading">🌸 தங்கள் வரவை விரும்பும் குடும்பத்தினர் 🌸</div>
+        <ul class="family-members">
+          <li>பொன். வில்லாளன் & பொன்னி</li>
+          <li>வெங்கடாசலம் & சரஸ்வதி</li>
+          <li>தீபக் & அமிழ்தினி</li>
+          <li>பாரதி கண்ணன்</li>
+        </ul>
+      </section>
+
+      <!-- Action Buttons -->
+      <div class="action-group">
+        <a class="btn btn-maps" href="https://maps.google.com/?q=19A/1,Ashok+Nagar+2nd+Cross+Rd,Jeeva+Nagar,Karur,Tamil+Nadu+639005" target="_blank" rel="noopener">
+          🗺️ Open in Google Maps
+        </a>
+
+        <a class="btn btn-call" href="tel:9443737217">
+          📞 Call / RSVP: 9443737217
+        </a>
+
+        <button class="btn btn-copy" onclick="copyWhatsAppMessage()">
+          📋 Copy WhatsApp Text
+        </button>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Replay & Controls -->
+  <div class="controls-bar">
+    <button class="btn-replay" onclick="closeDoors()">
+      <span>🔄 Replay Grand Entry</span>
+      <span class="slowmo-tag">SLOW-MO</span>
+    </button>
+  </div>
+
+  <div id="toast">Message copied to clipboard!</div>
+
+  <script>
+    const doorsOverlay = document.getElementById('doorsOverlay');
+    const mainCard = document.getElementById('mainCard');
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let confetti = [];
+    let animationFrame = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function openDoors() {
+      if (doorsOverlay.classList.contains('opened')) return;
+      doorsOverlay.classList.add('opened');
+      
+      // Card subtle 3D slow bloom
+      mainCard.style.transform = 'translateZ(18px) scale(1.02)';
+      setTimeout(() => {
+        mainCard.style.transform = 'translateZ(0) scale(1)';
+      }, 2000);
+
+      // Launch Dreamy Slow-Mo Confetti
+      launchSlowMoConfetti();
+    }
+
+    function closeDoors() {
+      doorsOverlay.classList.remove('opened');
+      mainCard.style.transform = 'translateZ(0) scale(1)';
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Dreamy Slow-Motion Confetti Engine
+    function launchSlowMoConfetti() {
+      confetti = [];
+      const colors = ['#38bdf8', '#7dd3fc', '#0284c7', '#fef08a', '#fbbf24', '#ffffff', '#93c5fd', '#bae6fd'];
+      const count = 110;
+
+      for (let i = 0; i < count; i++) {
+        confetti.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 160,
+          y: canvas.height / 2 + (Math.random() - 0.5) * 100,
+          w: Math.random() * 8 + 5,
+          h: Math.random() * 7 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 7,            // Gentle horizontal drift
+          vy: Math.random() * -5.5 - 2,             // Slow upward float
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 3.5,        // Slow, elegant spin
+          opacity: 1,
+          gravity: 0.085                            // 4x Slower gravity for true slow-mo
+        });
+      }
+
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      animateSlowMoConfetti();
+    }
+
+    function animateSlowMoConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let activeCount = 0;
+
+      confetti.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.vx *= 0.992;                              // Smooth deceleration
+        p.rotation += p.vRot;
+        p.opacity -= 0.0024;                        // Long lasting gentle fade
+
+        if (p.opacity > 0 && p.y < canvas.height + 50) {
+          activeCount++;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0, p.opacity);
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        }
+      });
+
+      if (activeCount > 0) {
+        animationFrame = requestAnimationFrame(animateSlowMoConfetti);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function copyWhatsAppMessage() {
+      const text = `🌟 *Our Little Prince is Turning ONE!* 👑🍼\n\nWe warmly invite you and your family to join us in celebrating the 1st Birthday of our little boy,\n\n👶 *RITVIK* 🎈\n\n📅 *Date:* Wednesday, 18th November 2026\n🎂 *Cake Cutting:* 11:00 AM\n🍛 *Lunch:* 1:00 PM onwards\n📍 *Venue:* 19A/1, Ashok Nagar 2nd Cross Rd, Jeeva Nagar, Karur - 639005\n📌 *Google Maps:* https://maps.google.com/?q=19A/1,Ashok+Nagar+2nd+Cross+Rd,Jeeva+Nagar,Karur,Tamil+Nadu+639005\n\nYour warm presence and heartfelt blessings will make this day truly special for our baby! ✨\n\n*தங்கள் வரவை விரும்பும்:*\n• பொன். வில்லாளன் & பொன்னி\n• வெங்கடாசலம் & சரஸ்வதி\n• தீபக் & அமிழ்தினி\n• பாரதி கண்ணன்\n\n📞 *RSVP / தொடர்பு:* 9443737217`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      });
+    }
+  </script>
+</body>
+</html>
